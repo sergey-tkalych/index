@@ -9,11 +9,50 @@
 	foreach($dirContent as $content){
 		$activeClass = in_array($content, $config['favorite']) ? ' active' : '';
 		if(is_dir($rootPath . $content)){
-			$allProjectsContent .= '<li><a href="/' . $content . '" class="add-favorite' . $activeClass . '"></a><a href="/' . $content . '">' . $content . '</a><span>' . date ('d.m.Y H:i', filemtime($rootPath . $content . '.')) . '</span></li>';
+			$allProjectsContent .= getProjectHtml($rootPath, $content, $activeClass);
 		}
 	}
 	foreach($config['favorite'] as $content){
-		$favoriteProjectsContent .= '<li><a href="/' . $content . '">' . $content . '</a></li>';
+		$favoriteProjectsContent .= getProjectHtml($rootPath, $content);
+	}
+
+	function getProjectHtml($rootPath, $content, $activeClass = null){
+		$favoriteHtml = $branchHtml = '';
+		$branch = getBranch($rootPath, $content);
+		if(isset($activeClass)){
+			$favoriteHtml = '<a href="/' . $content . '" class="add-favorite' . $activeClass . '"></a>';
+		}
+		if(isset($branch)){
+			$branchHtml = '<span class="branch">' . $branch . '</span>';
+		}
+		return '<li>'
+					. $favoriteHtml .
+					'<a href="/' . $content . '">' . $content . '</a>
+						<span>' . ago(filemtime($rootPath . $content . '.')) . '</span>'
+						. $branchHtml .
+				'</li>';
+	}
+
+	function getBranch($rootPath, $content){
+		$gitFile = $rootPath . $content . '/.git/HEAD';
+		if(is_file($gitFile)){
+			return str_replace('ref: refs/heads/', '', file_get_contents($gitFile));
+		}
+	}
+
+	function ago($timestamp){
+		$difference = time() - $timestamp;
+		$periods = array("second", "minute", "hour", "day", "week", "month", "years", "decade");
+		$lengths = array("60", "60", "24", "7", "4.35", "12", "10");
+		for($j = 0; $difference >= $lengths[$j]; $j++){
+			$difference /= $lengths[$j];
+		}
+		$difference = round($difference);
+		if($difference != 1){
+			$periods[$j] .= "s";
+		}
+		$text = "$difference $periods[$j] ago";
+		return $text;
 	}
 ?>
 
@@ -40,6 +79,7 @@
 				padding: 5px 0;
 				font-weight: bold;
 				-webkit-box-sizing: border-box;
+				box-sizing: border-box;
 				position: relative;
 			}
 			a:hover::after{
@@ -53,23 +93,23 @@
 			}
 			.projects{
 				display: -webkit-box;
+				display: box;
 				-webkit-box-pack: center;
+				box-pack: center;
 			}
 			.projects > div{
 				width: 50%;
 				-webkit-box-sizing: border-box;
+				box-sizing: border-box;
 				padding: 0 10px 0 0;
 			}
 			h2{
 				border-bottom: 1px solid #333333;
 				margin: 0;
 			}
-			ul{
-
-			}
 			ul li{
 				position: relative;
-				margin: 5px 0;
+				margin: 8px 0;
 			}
 			ul li span{
 				position: absolute;
@@ -77,6 +117,14 @@
 				right: 0;
 				font-size: 11px;
 				color: #333333;
+			}
+			ul li span.branch{
+				bottom: auto;
+				top: 0;
+				background: #eee;
+				border: 1px solid #ccc;
+				border-radius: 3px;
+				padding: 0 3px;
 			}
 			a.add-favorite{
 				position: absolute;
