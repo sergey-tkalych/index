@@ -161,11 +161,8 @@
 								response = JSON.parse(this.responseText);
 								if(response.isSet){
 									setClassName += ' active';
-									favoriteProject = document.createElement('li');
-									projectLink = document.createElement('a');
-									projectLink.setAttribute('href', '/' + href);
-									projectLink.innerText = href;
-									favoriteProject.appendChild(projectLink);
+									favoriteProject = that.parentNode.cloneNode(true);
+									favoriteProject.removeChild(favoriteProject.firstChild);
 									if(favoriteList.firstChild){
 										favoriteList.insertBefore(favoriteProject, favoriteList.firstChild);
 									}else{
