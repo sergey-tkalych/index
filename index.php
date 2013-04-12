@@ -108,11 +108,11 @@
 						event.stopPropagation();
 						event.preventDefault();
 						xhr.onreadystatechange = function(){
-							var response, favoriteProject, projectLink;
+							var response, favoriteProject, projectLink, setClassName = favoriteClassName;
 							if(this.readyState === 4){
 								response = JSON.parse(this.responseText);
 								if(response.isSet){
-									favoriteClassName += ' active';
+									setClassName += ' active';
 									favoriteProject = document.createElement('li');
 									projectLink = document.createElement('a');
 									projectLink.setAttribute('href', '/' + href);
@@ -126,7 +126,7 @@
 								}else{
 									favoriteList.removeChild(favoriteList.children[response.contentIndex]);
 								}
-								that.className = favoriteClassName;
+								that.className = setClassName;
 							}
 						};
 						xhr.open('GET', 'favorite.php?href=' + href, true);
