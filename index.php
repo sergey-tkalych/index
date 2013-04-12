@@ -7,8 +7,8 @@
 	$favoriteProjectsContent = '';
 
 	foreach($dirContent as $content){
-		$activeClass = in_array($content, $config['favorite']) ? ' active' : '';
 		if(is_dir($rootPath . $content)){
+			$activeClass = in_array($content, $config['favorite']) ? ' active' : '';
 			$allProjectsContent .= getProjectHtml($rootPath, $content, $activeClass);
 		}
 	}
@@ -51,8 +51,7 @@
 		if($difference != 1){
 			$periods[$j] .= "s";
 		}
-		$text = "$difference $periods[$j] ago";
-		return $text;
+		return "$difference $periods[$j] ago";
 	}
 ?>
 
