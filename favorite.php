@@ -1,25 +1,30 @@
 <?php
-	$configFile = $_SERVER['DOCUMENT_ROOT'] . 'config.json';
+	$rootPath = $_SERVER['DOCUMENT_ROOT'];
+	$configFile = $rootPath . 'config.json';
 	$config = json_decode(file_get_contents($configFile), true);
 	$href = $_GET['href'];
-	$isSet = true;
+	$isSet = false;
+	$contentIndex = 0;
 
-	if(in_array($href, $config['favorite'])){
-		$tempFavorite = array();
-		foreach($config['favorite'] as $i => $content){
-			if($content !== $href){
-				$tempFavorite[] = $content;
-			}else{
-				$contentIndex = $i;
+	if(is_dir($rootPath . $href)){
+		if(in_array($href, $config['favorite'])){
+			$tempFavorite = array();
+			foreach($config['favorite'] as $i => $content){
+				if($content !== $href){
+					$tempFavorite[] = $content;
+				}else{
+					$contentIndex = $i;
+				}
 			}
+			$config['favorite'] = $tempFavorite;
+			$isSet = false;
+		}else{
+			array_unshift($config['favorite'], $href);
+			$contentIndex = count($config['favorite']) - 1;
+			$isSet = true;
 		}
-		$config['favorite'] = $tempFavorite;
-		$isSet = false;
-	}else{
-		array_unshift($config['favorite'], $href);
-		$contentIndex = count($config['favorite']) - 1;
+		file_put_contents($configFile, json_encode($config));
 	}
-	file_put_contents($configFile, json_encode($config));
 
 	echo json_encode(array(
 		"isSet" => $isSet,
