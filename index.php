@@ -64,6 +64,7 @@
 			body{
 				font-family: Helvetica, Arial;
 				color: #333333;
+				background: #fbfbfb;
 				padding: 5px 30px;
 			}
 			ul{
